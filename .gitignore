@@ -1,0 +1,5 @@
+packer/esdata
+packer/esmaster
+packer/kibana
+packer/logs
+terraform/.terraform

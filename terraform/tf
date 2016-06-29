@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+# Setup Terraform Remote Config:
+#
+#terraform remote config -backend=s3 -backend-config="bucket=cluj-devops-meetup" -backend-config="key=terraform/terraform.tfstate" -backend-config="region=us-east-1"
+
+
+set -e
+
+
+CWD="$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)"
+PACKER_DIR="$(cd ${CWD} && cd ../packer && pwd)"
+
+terraform remote pull
+terraform "${@}" \
+    -var secret_key=${AWS_SECRET_ACCESS_KEY} \
+    -var access_key=${AWS_ACCESS_KEY_ID} \
+    -var esmaster_ami_id="$(cat ../packer/esmaster/latest_ami)" \
+    -var esdata_ami_id="$(cat ../packer/esdata/latest_ami)" \
+    -var kibana_ami_id="$(cat ../packer/kibana/latest_ami)"
+
+case ${1} in
+    plan | validate )
+        # Not pushing remote state for a plan or validate
+    ;;
+    * )
+        read -r -p "Push state? [y/N] " response
+        case $response in
+            [yY][eE][sS]|[yY]) 
+                terraform remote push
+            ;;
+        esac
+    ;;
+esac

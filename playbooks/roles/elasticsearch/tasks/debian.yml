@@ -1,0 +1,25 @@
+---
+
+- name: disable_swappiness
+  sysctl: name=vm.swappiness value=0 state=present reload=yes
+
+- name: increase_virtual_memory
+  sysctl: name=vm.max_map_count value=262144 state=present reload=yes 
+
+- name: add_elasticsearch_repo_key
+  apt_key: url='https://packages.elastic.co/GPG-KEY-elasticsearch' state=present
+
+- name: add_elasticsearch_repo
+  apt_repository: repo='deb https://packages.elastic.co/elasticsearch/2.x/debian stable main' update_cache=yes
+
+- name: install_elasticsearch
+  apt: name=elasticsearch state=latest
+
+- name: install_discovery_plugin
+  shell: bin/plugin install cloud-aws chdir=/usr/share/elasticsearch
+
+- name: configure_es_defaults
+  copy: src=elasticsearch_defaults dest=/etc/default/elasticsearch owner=root group=root mode=0644
+
+- name: enable_elasticsearch_service
+  service: name=elasticsearch enabled=yes

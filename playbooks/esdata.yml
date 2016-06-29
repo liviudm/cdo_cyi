@@ -1,0 +1,10 @@
+---
+
+- name: Provision ElasticSearch Data AMI
+  hosts: all
+  become: yes
+  become_method: sudo
+  roles:
+    - java8
+    - elasticsearch
+    - esdata

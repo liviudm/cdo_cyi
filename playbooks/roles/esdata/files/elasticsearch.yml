@@ -1,0 +1,17 @@
+botstrap.mlockall: true
+plugin.mandatory: "cloud-aws"
+
+cluster.name: "Cluj.DevOps" 
+node.name: ${HOSTNAME}
+node.master: false
+node.data: true
+     
+discovery.type: "ec2"
+discovery.ec2.groups: "elasticsearch"
+discovery.ec2.ping_timeout: "30s"
+cloud.aws.region: "us-east"
+discovery.zen.ping.multicast.enabled: false
+discovery.zen.minimum_master_nodes: 2
+
+network.host: [_ec2_]
+
